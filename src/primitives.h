@@ -102,9 +102,8 @@ parlay::sequence<T> scan(const parlay::sequence<T> &a, int l, int r) {
   parlay::sequence<T> res(r - l);
   blocked_for(l, r, [&](int i, int s, int e) {
     // printf("scan %i %i\n", s, e);
+    res[s] = sums[i];
     scan_serial_inplace(a, res, s, e);
-    for (int j = s; j < e; ++j)
-      res[j] += sums[i];
   });
   return res;
 }
