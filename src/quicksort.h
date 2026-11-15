@@ -27,7 +27,7 @@ template <typename T> void quicksort(parlay::sequence<T> &a) {
 }
 
 template <typename T> void quicksort_par(parlay::sequence<T> &a) {
-  if (a.size() <= BLOCK) {
+  if (a.size() <= 10000) {
     // std::cout<<"{\n";
     // print(a);
     quicksort(a);
@@ -36,14 +36,22 @@ template <typename T> void quicksort_par(parlay::sequence<T> &a) {
     return;
   }
   T pivot = a[a.size() / 2];
-  parlay::sequence<T> left, middle, right;
-  parlay::par_do3(
-      [&]() { left = filter(a, [&](const T &x) { return x < pivot; }); },
-      [&]() { middle = filter(a, [&](const T &x) { return x == pivot; }); },
-      [&]() { right = filter(a, [&](const T &x) { return x > pivot; }); });
-  // auto left = filter(a, [&](const T& x) { return x < pivot; });
-  // auto middle = filter(a, [&](const T& x) { return x == pivot; });
-  // auto right = filter(a, [&](const T& x) { return x > pivot; });
+  // parlay::sequence<T> points(101);
+  // int step = a.size() / 101;
+  // parallel_for(0, 101, [&](int i) {
+  //   points[i] = a[i * step];
+  // });
+  // quicksort(points);
+  // T pivot = points[50];
+
+  // parlay::sequence<T> left, middle, right;
+  // parlay::par_do3(
+  //     [&]() { left = filter(a, [&](const T &x) { return x < pivot; }); },
+  //     [&]() { middle = filter(a, [&](const T &x) { return x == pivot; }); },
+  //     [&]() { right = filter(a, [&](const T &x) { return x > pivot; }); });
+  auto left = filter(a, [&](const T& x) { return x < pivot; });
+  auto middle = filter(a, [&](const T& x) { return x == pivot; });
+  auto right = filter(a, [&](const T& x) { return x > pivot; });
   // std::cout << "SORT " << pivot << "\n";
   // print(left);
   // print(middle);

@@ -92,9 +92,8 @@ template <typename T> void print(const parlay::sequence<T> &a) {
 
 template <typename T>
 parlay::sequence<T> scan(const parlay::sequence<T> &a, int l, int r) {
-  if (r - l <= BLOCK) {
+  if (r - l <= BLOCK)
     return scan_serial(a, l, r);
-  }
   parlay::sequence<T> sums(blocks_count(r - l));
   blocked_for(l, r,
               [&](int i, int s, int e) { sums[i] = reduce_serial(a, s, e); });
