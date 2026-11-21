@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <parlay/parallel.h>
@@ -8,8 +9,9 @@
 
 
 int main() {
+  if (false) {
   // parlay::sequence<int> arr(3);
-  // parlay::sequence<int> arr(10);
+  parlay::sequence<int> arr(10);
   // for (int i = 0; i < arr.size(); ++i) {
   //   arr[i] = i;
   // }
@@ -17,16 +19,21 @@ int main() {
   // print(res);
   // auto res2 = filter(arr, [](int x) { return x % 2 == 1; });
   // print(res2);
-  // for (int i = 0; i < arr.size(); ++i) {
-  //   arr[i] = arr.size() - i;
-  //   arr[i] = rand() % 10000;
-  // }
-  // quicksort_par(arr);
+  for (int i = 0; i < arr.size(); ++i) {
+    arr[i] = arr.size() - i;
+    arr[i] = rand();
+  }
+  quicksort_par(arr);
   // quicksort(arr);
-  // print(arr);
+  print(arr);
+  }
+
+  if (true) {
   parlay::sequence<int> arr(1e8);
   for (int i = 0; i < arr.size(); ++i)
     arr[i] = rand() % 10000;
+  parlay::sequence<int> target = arr;
+  std::sort(target.begin(), target.end());
 
   constexpr int N = 5;
   float d1t = 0, d2t = 0;
@@ -35,10 +42,15 @@ int main() {
       auto arr2 = arr;
       auto start2 = std::chrono::high_resolution_clock::now();
       quicksort_par(arr2);
-      // quicksort(arr2);
       auto end2 = std::chrono::high_resolution_clock::now();
       auto d2 = end2 - start2;
       d2t += d2.count();
+      for (int i = 0; i < arr.size(); ++i) {
+        if (target[i] != arr2[i]) {
+          std::cout << "diff at " << i << "\n";
+          return 1;
+        }
+      }
     }
   // });
 
@@ -59,4 +71,5 @@ int main() {
   // }
   std::cout << d1t << ' ' << d2t << "\n";
   std::cout << d1t / d2t << "\n";
+  }
 }

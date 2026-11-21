@@ -27,7 +27,7 @@ template <typename T> void quicksort(parlay::sequence<T> &a) {
 }
 
 template <typename T> void quicksort_par(parlay::sequence<T> &a) {
-  if (a.size() <= 2) {
+  if (a.size() <= 10000) {
     // std::cout<<"{\n";
     // print(a);
     quicksort(a);

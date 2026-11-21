@@ -11,7 +11,9 @@ FetchContent_Declare(parlaylib
 )
 FetchContent_MakeAvailable(parlaylib)  
 
-add_executable(${PROJECT_NAME} src/main.cpp)
 # add_compile_options(-fsanitize=address -fsanitize=undefined)
 # add_link_options(-fsanitize=address -fsanitize=undefined)
+# add_compile_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
+# add_link_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
+add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE parlay)
