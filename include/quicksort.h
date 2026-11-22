@@ -1,13 +1,16 @@
 #pragma once
 #include "parlay/parallel.h"
+#include "parlay/random.h"
 
 enum class Algorithm { Parallel, Serial };
 
 template <Algorithm kind, typename It> 
 void quicksort(It l, It r) {
+  thread_local parlay::random_generator gen;
   auto diff = --r - l;
+  std::uniform_int_distribution<size_t> dis(0, diff);
   if (diff <= 0) return;
-  auto pivot = *(l + diff / 2);
+  auto pivot = *(l + dis(gen));
   It i = l;
   It j = r;
   while (i <= j) {
