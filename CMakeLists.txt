@@ -10,10 +10,12 @@ FetchContent_Declare(parlaylib
     GIT_TAG         master
 )
 FetchContent_MakeAvailable(parlaylib)  
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-# add_compile_options(-fsanitize=address -fsanitize=undefined)
-# add_link_options(-fsanitize=address -fsanitize=undefined)
-# add_compile_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
-# add_link_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
-add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE parlay)
+add_subdirectory(test)
+# target_link_libraries(${PROJECT_NAME} PRIVATE parlay)
