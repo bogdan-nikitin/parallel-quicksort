@@ -62,8 +62,9 @@ TEST(Performance, PerformanceTest) {
   parlay::sequence<int> expected;
   parlay::sequence<int> copy;
   constexpr int N = 5;
-  float t_ser = 0, t_par = 0;
+  float t_ser_sum = 0, t_par_sum = 0, t_ser, t_par;
 
+  std::cout << "Parallel, ms\tSerial, ms\tRatio\n";
   parlay::execute_with_scheduler(4, [&] {
     for (int i = 0; i < N; ++i) {
       arr = random_array(1e8, 1e8);
@@ -71,23 +72,32 @@ TEST(Performance, PerformanceTest) {
       std::sort(expected.begin(), expected.end());
 
       copy = arr;
-      t_par += measure_time([&]() {
+      
+      t_par = measure_time([&]() {
         quicksort<Algorithm::Parallel>(copy.begin(), copy.end());
       });
+      t_par_sum += t_par;
+      std::cout << t_par << "\t";
       EXPECT_EQ(copy, expected);
 
       copy = arr;
-      t_ser += measure_time([&]() {
+      t_ser = measure_time([&]() {
         quicksort<Algorithm::Serial>(copy.begin(), copy.end());
       });
+      t_ser_sum += t_ser;
+      std::cout << t_ser << "\t";
       EXPECT_EQ(copy, expected);
+
+      auto ratio = t_ser / t_par;
+      std::cout << ratio << "\n";
     }
   });
+  std::cout << "\n";
 
-  auto ratio = t_ser / t_par;
+  auto ratio = t_ser_sum / t_par_sum;
 
-  std::cout << "Average parallel: " << t_par / N << " ms\n";
-  std::cout << "Average serial:   " << t_ser / N << " ms\n";
+  std::cout << "Average parallel: " << t_par_sum / N << " ms\n";
+  std::cout << "Average serial:   " << t_ser_sum / N << " ms\n";
   std::cout << "Ratio: " << ratio << "\n";
   EXPECT_GE(ratio, 3);
 }
